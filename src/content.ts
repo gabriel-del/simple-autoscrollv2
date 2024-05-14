@@ -11,7 +11,7 @@ const element = window.location.origin === 'https://docs.google.com'
   ? document.querySelector('.kix-appview-editor')
   : null
 
-function startAutoscroll(scrollDuration: number, scrollPixels: number, loop: boolean) {
+function startAutoscroll(scrollDuration: number, scrollPixels: number, loop: boolean = false) {
   if (intCB >= 0) clearInterval(intCB)
   intCB = setInterval(() => {
     const elements = [element, document?.body, document?.body?.parentNode].filter(Boolean) as Element[]
@@ -42,6 +42,7 @@ async function main() {
   }
 
   chrome.runtime.onMessage.addListener(message => {
+    console.log(message)
     if (message) {
       isLooping = false
       const {scrollDuration: SD, scrollPixels: SP, loop, stop, pause} = message as Message
@@ -52,7 +53,6 @@ async function main() {
         if (intCB >= 0)
           stopAutoscroll()
         else
-          // scrollLoop default deve ser false
           if (scrollDuration && scrollPixels) startAutoscroll(scrollDuration, scrollPixels, scrollLoop)
       } else {
         scrollDuration = SD
