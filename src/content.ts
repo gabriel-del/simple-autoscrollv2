@@ -23,8 +23,7 @@ function scrollElement(mainElement: Element, amount: number, loop: boolean = fal
   const scrollTop = mainElement.scrollTop
   if (isLooping) {
     if (percentage < 0.01) isLooping = false
-  }
- else {
+  } else {
     mainElement.scroll(0, scrollTop + amount)
   }
   const delta = mainElement.scrollTop - scrollTop
@@ -80,11 +79,9 @@ async function main() {
         scrollLoop = loop
         if (stop) {
           stopAutoscroll()
-        }
- else if (pause) {
+        } else if (pause) {
           toggleAutoscroll(scrollDuration, scrollPixels, scrollLoop)
-        }
- else {
+        } else {
           scrollDuration = SD
           scrollPixels = SP
           startAutoscroll(SD, SP, loop)

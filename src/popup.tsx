@@ -182,11 +182,9 @@ function FormHandler() {
           setScrollPixels(scrollPixels)
           setLoop(Boolean(loop))
         }
-      }
- catch (e) {
+      } catch (e) {
         console.error(e)
-      }
- finally {
+      } finally {
         finishedSyncing()
       }
     }
@@ -201,16 +199,13 @@ function FormHandler() {
             await chrome.tabs.sendMessage(firstTab.id, message as Message)
             if (showErrors) setError('')
             console.log('Sent to tab: ', firstTab.id)
-          }
- catch (e) {
+          } catch (e) {
             if (showErrors) setError(ErrorMessages.CANNOT_CONNECT_TO_ACTIVE_TAB)
           }
-        }
- else {
+        } else {
           if (showErrors) setError(ErrorMessages.CANNOT_QUERY_CURRENT_TAB)
         }
-      }
- catch (e) {
+      } catch (e) {
         if (showErrors) setError(ErrorMessages.CANNOT_QUERY_CURRENT_TAB)
         console.error(e)
       }
@@ -243,8 +238,7 @@ function FormHandler() {
             loop
           } as Settings
         })
-      }
- catch (e) {
+      } catch (e) {
         console.error(e)
       }
     }

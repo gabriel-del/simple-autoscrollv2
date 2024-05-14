@@ -8,7 +8,7 @@ export default antfu(
       'ts/space-infix-ops': 'off',
       'style/object-curly-spacing': ['error', 'never'],
       'max-statements-per-line': ['error', {max: 6}],
-      'ts/brace-style': ['error', '1tbs', {allowSingleLine: true}],
+      'style/brace-style': ['error', '1tbs', {allowSingleLine: true}],
       'arrow-parens': ['error', 'as-needed'],
       'antfu/if-newline': 0,
       'style/block-spacing': ['error', 'never'],
