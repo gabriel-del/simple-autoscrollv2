@@ -11,7 +11,7 @@ const element = window.location.origin === 'https://docs.google.com'
   ? document.querySelector('.kix-appview-editor')
   : null
 
-function startAutoscroll(scrollDuration: number, scrollPixels: number, loop: boolean){
+function startAutoscroll(scrollDuration: number, scrollPixels: number, loop: boolean) {
   if (intCB >= 0) clearInterval(intCB)
   intCB = setInterval(() => {
     const elements = [element, document?.body, document?.body?.parentNode].filter(Boolean) as Element[]
@@ -36,33 +36,31 @@ function startAutoscroll(scrollDuration: number, scrollPixels: number, loop: boo
 }
 
 async function main() {
-
-    const stopAutoscroll = () => {
-      clearInterval(intCB)
-      intCB = -1
-    }
-
-
-    chrome.runtime.onMessage.addListener(message => {
-      if (message) {
-        isLooping = false
-        const {scrollDuration: SD, scrollPixels: SP, loop, stop, pause} = message as Message
-        scrollLoop = loop
-        if (stop) {
-          stopAutoscroll()
-        } else if (pause) {
-          if (intCB >= 0)
-            stopAutoscroll()
-          else
-          // scrollLoop default deve ser false
-            if (scrollDuration && scrollPixels) startAutoscroll(scrollDuration, scrollPixels, scrollLoop)
-        } else {
-          scrollDuration = SD
-          scrollPixels = SP
-          startAutoscroll(SD, SP, loop)
-        }
-      }
-    })
+  const stopAutoscroll = () => {
+    clearInterval(intCB)
+    intCB = -1
   }
+
+  chrome.runtime.onMessage.addListener(message => {
+    if (message) {
+      isLooping = false
+      const {scrollDuration: SD, scrollPixels: SP, loop, stop, pause} = message as Message
+      scrollLoop = loop
+      if (stop) {
+        stopAutoscroll()
+      } else if (pause) {
+        if (intCB >= 0)
+          stopAutoscroll()
+        else
+          // scrollLoop default deve ser false
+          if (scrollDuration && scrollPixels) startAutoscroll(scrollDuration, scrollPixels, scrollLoop)
+      } else {
+        scrollDuration = SD
+        scrollPixels = SP
+        startAutoscroll(SD, SP, loop)
+      }
+    }
+  })
+}
 
 main()
