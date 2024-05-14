@@ -41,16 +41,7 @@ async function main() {
       }, scrollDuration)
     }
 
-    const toggleAutoscroll = (
-      scrollDuration: number | null,
-      scrollPixels: number | null,
-      loop: boolean = false
-    ) => {
-      if (intCB >= 0)
-        stopAutoscroll()
-      else
-        if (scrollDuration && scrollPixels) startAutoscroll(scrollDuration, scrollPixels, loop)
-    }
+
 
     chrome.runtime.onMessage.addListener((message) => {
       if (message) {
@@ -60,7 +51,11 @@ async function main() {
         if (stop) {
           stopAutoscroll()
         } else if (pause) {
-          toggleAutoscroll(scrollDuration, scrollPixels, scrollLoop)
+            if (intCB >= 0)
+              stopAutoscroll()
+            else
+              // scrollLoop default deve ser false
+              if (scrollDuration && scrollPixels) startAutoscroll(scrollDuration, scrollPixels, scrollLoop)
         } else {
           scrollDuration = SD
           scrollPixels = SP
