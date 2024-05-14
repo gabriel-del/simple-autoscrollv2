@@ -8,7 +8,8 @@
     "dev": "vite",
     "build": "vite build",
     "build:watch": "vite build --watch",
-    "format": "prettier --write src/"
+    "format": "prettier --write src/",
+    "pack": "zip -r simple-autoscrollv2.zip scripts images LICENSE manifest.json"
   },
   "author": "",
   "license": "ISC",
