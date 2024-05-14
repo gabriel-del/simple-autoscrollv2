@@ -17,7 +17,7 @@ export default antfu(
       'no-new': 0,
       'no-eval': ['warn', {allowIndirect: true}],
       'style/lines-between-class-members': ['error', 'never'],
-      'ts/indent': ['error', 2],
+      'style/indent': ['error', 2],
       'style/comma-dangle': ['error', 'never']
     }
   },

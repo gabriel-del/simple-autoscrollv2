@@ -72,7 +72,7 @@ async function main() {
         if (scrollDuration && scrollPixels) startAutoscroll(scrollDuration, scrollPixels, loop)
     }
 
-    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
       if (message) {
         isLooping = false
         const {scrollDuration: SD, scrollPixels: SP, loop, stop, pause} = message as Message

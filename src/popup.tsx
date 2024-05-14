@@ -44,7 +44,13 @@ function TransientMessage({
   return visible
     ? (
       <span style={{opacity}} {...rest}>
+        {' '}
+        {' '}
+        {' '}
         {children}
+        {' '}
+        {' '}
+        {' '}
       </span>
     )
     : null
@@ -99,7 +105,7 @@ function Form({
             >
               Saved ✓
             </div>
-            )
+          )
           : null}
         Scroll
         <br />
