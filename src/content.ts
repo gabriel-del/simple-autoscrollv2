@@ -2,18 +2,12 @@ import {Message} from './types'
 
 console.info('Simple Autoscroll Loaded')
 
-const element
-  = window.location.origin === 'https://docs.google.com'
+const element = window.location.origin === 'https://docs.google.com'
     ? document.querySelector('.kix-appview-editor')
     : null
 
 function getScrollPercentage(element: Element) {
-  const scrollTop = element.scrollTop
-  const scrollHeight = element.scrollHeight
-  const clientHeight = element.clientHeight
-  const scrollDistance = scrollHeight - clientHeight
-  const scrollPercentage = scrollTop / scrollDistance
-  return scrollPercentage
+  return element.scrollTop / ( element.scrollHeight - element.clientHeight )
 }
 
 let isLooping = false
@@ -72,7 +66,7 @@ async function main() {
         if (scrollDuration && scrollPixels) startAutoscroll(scrollDuration, scrollPixels, loop)
     }
 
-    chrome.runtime.onMessage.addListener((message, _sender, _sendResponse) => {
+    chrome.runtime.onMessage.addListener((message) => {
       if (message) {
         isLooping = false
         const {scrollDuration: SD, scrollPixels: SP, loop, stop, pause} = message as Message
