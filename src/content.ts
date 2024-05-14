@@ -1,6 +1,7 @@
 import {Message} from './types'
 
 console.info('Simple Autoscroll Loaded')
+let isLooping = false
 
 const element = window.location.origin === 'https://docs.google.com'
     ? document.querySelector('.kix-appview-editor')
@@ -10,7 +11,6 @@ function getScrollPercentage(element: Element) {
   return element.scrollTop / ( element.scrollHeight - element.clientHeight )
 }
 
-let isLooping = false
 function scrollElement(mainElement: Element, amount: number, loop: boolean = false) {
   const percentage = getScrollPercentage(mainElement)
   const isDone = percentage > 0.99
@@ -24,10 +24,7 @@ function scrollElement(mainElement: Element, amount: number, loop: boolean = fal
   if (isDone && loop) {
     // Some websites slow down scrolling, causing the looping function to potentially break as it takes too long to reach the top. To fix it
     isLooping = true
-    mainElement.scroll({
-      top: 0,
-      behavior: 'auto'
-    })
+    mainElement.scroll({ top: 0, behavior: 'auto' })
   }
   return delta
 }
@@ -45,9 +42,7 @@ async function main() {
     const startAutoscroll = (scrollDuration: number, scrollPixels: number, loop: boolean) => {
       if (intCB >= 0) clearInterval(intCB)
       intCB = setInterval(() => {
-        const elements = [element, document?.body, document?.body?.parentNode].filter(
-          Boolean
-        ) as Element[]
+        const elements = [element, document?.body, document?.body?.parentNode].filter( Boolean ) as Element[]
         for (const element of elements) {
           const delta = scrollElement(element, scrollPixels!, loop)
           if (delta) break
