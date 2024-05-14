@@ -7,12 +7,6 @@ const element = window.location.origin === 'https://docs.google.com'
     ? document.querySelector('.kix-appview-editor')
     : null
 
-function getScrollPercentage(element: Element) {
-  return element.scrollTop / ( element.scrollHeight - element.clientHeight )
-}
-
-
-
 async function main() {
   if (globalThis.chrome) {
     let intCB: number = -1
@@ -28,7 +22,7 @@ async function main() {
       intCB = setInterval(() => {
         const elements = [element, document?.body, document?.body?.parentNode].filter( Boolean ) as Element[]
         for (const element of elements) {
-            const percentage = getScrollPercentage(element)
+            const percentage = element.scrollTop / ( element.scrollHeight - element.clientHeight )
             const isDone = percentage > 0.99
             const scrollTop = element.scrollTop
             if (isLooping) {
