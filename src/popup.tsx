@@ -13,7 +13,7 @@ const ErrorMessages = {
     'Unable to query the active tab. Please ensure that the window is active and try again'
 } as const
 
-function TransientMessage({children, duration, value, delay = 0, done, ...rest}: {
+async function TransientMessage({children, duration, value, delay = 0, done, ...rest}: {
   children: ReactNode
   duration: number
   delay?: number
@@ -24,37 +24,20 @@ function TransientMessage({children, duration, value, delay = 0, done, ...rest}:
   const [opacity, setOpacity] = useState(1)
   const [visible, setVisibility] = useState(true)
   useEffect(() => {
-    setOpacity(1)
-    setVisibility(true)
-    setTimeout(() => {
-      setOpacity(0)
-      setTimeout(() => {
-        setVisibility(false)
-        if (done) done()
-      }, duration)
-    }, delay)
+    (async () => {
+      setOpacity(1);
+      setVisibility(true);
+      await new Promise(resolve => setTimeout(resolve, delay));
+      setOpacity(0);
+      await new Promise(resolve => setTimeout(resolve, duration));
+      setVisibility(false);
+      if (done) done();
+    })()
   }, [value])
+
+
   return visible
-    ? (
-      <span style={{opacity}} {...rest}>
-        {' '}
-        {' '}
-        {' '}
-        {' '}
-        {' '}
-        {' '}
-        {' '}
-        {children}
-        {' '}
-        {' '}
-        {' '}
-        {' '}
-        {' '}
-        {' '}
-        {' '}
-      </span>
-    )
-    : null
+    ? ( <span style={{opacity}} {...rest}> {'       '}{children}{'       '} </span> ) : null
 }
 
 const settingsKey = 'defaultSettings'
@@ -72,9 +55,10 @@ function FormHandler() {
     setDoneSyncing(false)
     setDoneOpacity(1)
   }
-  const finishedSyncing = () => {
+  const finishedSyncing =  async () => {
     setDoneSyncing(true)
-    setTimeout(() => {setDoneOpacity(0)}, 3000)
+    await new Promise(_ => setTimeout(_, 3000))
+    setDoneOpacity(0)
   }
   const fetchSyncedSettings = async () => {
     if (globalThis.chrome?.storage) {
@@ -146,10 +130,10 @@ function FormHandler() {
     }
     setDisplaySaved(true)
     setSavedOpacity(1)
-    setTimeout(() => {
-      setSavedOpacity(0)
-      setTimeout(() => {setDisplaySaved(false)}, 1500)
-    }, 3000)
+    await new Promise(_ => setTimeout(_, 3000))
+    setSavedOpacity(0)
+    await new Promise(_ => setTimeout(_, 1500))
+    setDisplaySaved(false)
     finishedSyncing()
   }
 
@@ -164,23 +148,17 @@ function FormHandler() {
         Scroll
         <br />
         <input id="scroll" type="number" min="-5000" max="5000" value={String(scrollPixels)} onChange={e => setScrollPixels(Number(e.target.value))} />
-        {' '}
-        {' '}
-        pixels every
-        {' '}
+        {'   pixels every '}
         <br />
         <input id="seconds" type="number" min="1" max="600000" value={String(scrollDuration)} onChange={e => setScrollDuration(Number(e.target.value))} />
-        {' '}
-        milliseconds
+        {' milliseconds'}
         <br />
         <input type="checkbox" name="loop" id="loop" checked={loop} onChange={e => setLoop(e.target.checked)} />
         <label htmlFor="loop">loop?</label>
       </div>
       {
         <button type="submit">
-          {' '}
-          {'Go'}
-          {' '}
+          {' Go '}
         </button>
       }
     </form>
