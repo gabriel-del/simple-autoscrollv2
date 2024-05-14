@@ -57,18 +57,13 @@ function TransientMessage({children, duration, value, delay = 0, done, ...rest}:
     : null
 }
 
-
-
-const defaultScrollRate = 25
-const defaultScrollPixels = 5
-const defaultLoopState = false
 const settingsKey = 'defaultSettings'
 
 function FormHandler() {
   const [error, setError] = useState('')
-  const [scrollDuration, setScrollDuration] = useState(defaultScrollRate)
-  const [scrollPixels, setScrollPixels] = useState(defaultScrollPixels)
-  const [loop, setLoop] = useState(defaultLoopState)
+  const [scrollDuration, setScrollDuration] = useState(25)
+  const [scrollPixels, setScrollPixels] = useState(5)
+  const [loop, setLoop] = useState(false)
   const [savedOpacity, setSavedOpacity] = useState(0)
   const [displaySaved, setDisplaySaved] = useState(false)
   const [doneSyncing, setDoneSyncing] = useState(true)
