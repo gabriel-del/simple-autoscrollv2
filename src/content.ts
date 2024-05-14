@@ -11,23 +11,7 @@ function getScrollPercentage(element: Element) {
   return element.scrollTop / ( element.scrollHeight - element.clientHeight )
 }
 
-function scrollElement(mainElement: Element, amount: number, loop: boolean = false) {
-  const percentage = getScrollPercentage(mainElement)
-  const isDone = percentage > 0.99
-  const scrollTop = mainElement.scrollTop
-  if (isLooping) {
-    if (percentage < 0.01) isLooping = false
-  } else {
-    mainElement.scroll(0, scrollTop + amount)
-  }
-  const delta = mainElement.scrollTop - scrollTop
-  if (isDone && loop) {
-    // Some websites slow down scrolling, causing the looping function to potentially break as it takes too long to reach the top. To fix it
-    isLooping = true
-    mainElement.scroll({ top: 0, behavior: 'auto' })
-  }
-  return delta
-}
+
 
 async function main() {
   if (globalThis.chrome) {
@@ -44,7 +28,20 @@ async function main() {
       intCB = setInterval(() => {
         const elements = [element, document?.body, document?.body?.parentNode].filter( Boolean ) as Element[]
         for (const element of elements) {
-          const delta = scrollElement(element, scrollPixels!, loop)
+            const percentage = getScrollPercentage(element)
+            const isDone = percentage > 0.99
+            const scrollTop = element.scrollTop
+            if (isLooping) {
+              if (percentage < 0.01) isLooping = false
+            } else {
+              element.scroll(0, scrollTop + scrollPixels!)
+            }
+            const delta = element.scrollTop - scrollTop
+            if (isDone && loop) {
+              // Some websites slow down scrolling, causing the looping function to potentially break as it takes too long to reach the top. To fix it
+              isLooping = true
+              element.scroll({ top: 0, behavior: 'auto' })
+            }
           if (delta) break
         }
       }, scrollDuration)
