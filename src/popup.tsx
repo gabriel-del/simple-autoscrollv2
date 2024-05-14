@@ -57,70 +57,7 @@ function TransientMessage({children, duration, value, delay = 0, done, ...rest}:
     : null
 }
 
-function Form({
-  ScrollSpeed,
-  setScrollSpeed,
-  onSubmit,
-  scrollPixels,
-  setScrollPixels,
-  submitClass,
-  displaySaved,
-  loop,
-  setLoop,
-  savedOpacity = 1,
-  saveAsDefault,
-  submitContent = 'Go'
-}: {
-  ScrollSpeed: number
-  setScrollSpeed: (speed: number) => void
-  scrollPixels: number
-  setScrollPixels: (pixels: number) => void
-  saveAsDefault: () => Promise<void>
-  onSubmit?: () => void
-  savedOpacity: number
-  displaySaved: boolean
-  loop: boolean
-  setLoop: (loop: boolean) => void
-  submitContent?: React.ReactNode
-  submitClass?: string
-}) {
-  return (
-    <form
-      onSubmit={e => {
-        e.preventDefault()
-        if (onSubmit) onSubmit()
-      }}
-    >
-      <div className="grid">
-        <button id="default" type="button" onClick={saveAsDefault}> Save as default </button>
-        {displaySaved
-          ? (<div className="save-section" id="saved" style={{opacity: savedOpacity}}> Saved ✓ </div>)
-          : null}
-        Scroll
-        <br />
-        <input id="scroll" type="number" min="-5000" max="5000" value={String(scrollPixels)} onChange={e => setScrollPixels(Number(e.target.value))} />
-        {' '}
-        {' '}
-        pixels every
-        {' '}
-        <br />
-        <input id="seconds" type="number" min="1" max="600000" value={String(ScrollSpeed)} onChange={e => setScrollSpeed(Number(e.target.value))} />
-        {' '}
-        milliseconds
-        <br />
-        <input type="checkbox" name="loop" id="loop" checked={loop} onChange={e => setLoop(e.target.checked)} />
-        <label htmlFor="loop">loop?</label>
-      </div>
-      {onSubmit && (
-        <button type="submit" className={submitClass || ''}>
-          {' '}
-          {submitContent}
-          {' '}
-        </button>
-      )}
-    </form>
-  )
-}
+
 
 const defaultScrollRate = 25
 const defaultScrollPixels = 5
@@ -223,18 +160,37 @@ function FormHandler() {
 
   return (
     <>
-      <Form
-        ScrollSpeed={scrollDuration}
-        setScrollSpeed={setScrollDuration}
-        onSubmit={onSubmit}
-        savedOpacity={savedOpacity}
-        displaySaved={displaySaved}
-        scrollPixels={scrollPixels}
-        setScrollPixels={setScrollPixels}
-        saveAsDefault={saveAsDefault}
-        loop={loop}
-        setLoop={setLoop}
-      />
+    <form onSubmit={e => { e.preventDefault(); if (onSubmit) onSubmit() }} >
+      <div className="grid">
+        <button id="default" type="button" onClick={saveAsDefault}> Save as default </button>
+        {displaySaved
+          ? (<div className="save-section" id="saved" style={{opacity: savedOpacity}}> Saved ✓ </div>)
+          : null}
+        Scroll
+        <br />
+        <input id="scroll" type="number" min="-5000" max="5000" value={String(scrollPixels)} onChange={e => setScrollPixels(Number(e.target.value))} />
+        {' '}
+        {' '}
+        pixels every
+        {' '}
+        <br />
+        <input id="seconds" type="number" min="1" max="600000" value={String(scrollDuration)} onChange={e => setScrollDuration(Number(e.target.value))} />
+        {' '}
+        milliseconds
+        <br />
+        <input type="checkbox" name="loop" id="loop" checked={loop} onChange={e => setLoop(e.target.checked)} />
+        <label htmlFor="loop">loop?</label>
+      </div>
+      {
+        <button type="submit">
+          {' '}
+          {'Go'}
+          {' '}
+        </button>
+      }
+    </form>
+
+
       <div aria-busy={!doneSyncing} className="syncing" style={{opacity: doneOpacity}}>
         {doneSyncing ? 'Synced!' : 'Syncing...'}
       </div>
