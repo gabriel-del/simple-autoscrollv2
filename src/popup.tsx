@@ -13,14 +13,7 @@ const ErrorMessages = {
     'Unable to query the active tab. Please ensure that the window is active and try again'
 } as const
 
-function TransientMessage({
-  children,
-  duration,
-  value,
-  delay = 0,
-  done,
-  ...rest
-}: {
+function TransientMessage({children, duration, value, delay = 0, done, ...rest}: {
   children: ReactNode
   duration: number
   delay?: number
@@ -47,7 +40,15 @@ function TransientMessage({
         {' '}
         {' '}
         {' '}
+        {' '}
+        {' '}
+        {' '}
+        {' '}
         {children}
+        {' '}
+        {' '}
+        {' '}
+        {' '}
         {' '}
         {' '}
         {' '}
@@ -91,59 +92,30 @@ function Form({
       }}
     >
       <div className="grid">
-        <button id="default" type="button" onClick={saveAsDefault}>
-          Save as default
-        </button>
+        <button id="default" type="button" onClick={saveAsDefault}> Save as default </button>
         {displaySaved
-          ? (
-            <div
-              className="save-section"
-              id="saved"
-              style={{
-                opacity: savedOpacity
-              }}
-            >
-              Saved ✓
-            </div>
-          )
+          ? (<div className="save-section" id="saved" style={{opacity: savedOpacity}}> Saved ✓ </div>)
           : null}
         Scroll
         <br />
-        <input
-          id="scroll"
-          type="number"
-          min="-5000"
-          max="5000"
-          value={String(scrollPixels)}
-          onChange={e => setScrollPixels(Number(e.target.value))}
-        />
+        <input id="scroll" type="number" min="-5000" max="5000" value={String(scrollPixels)} onChange={e => setScrollPixels(Number(e.target.value))} />
+        {' '}
         {' '}
         pixels every
         {' '}
         <br />
-        <input
-          id="seconds"
-          type="number"
-          min="1"
-          max="600000"
-          value={String(ScrollSpeed)}
-          onChange={e => setScrollSpeed(Number(e.target.value))}
-        />
+        <input id="seconds" type="number" min="1" max="600000" value={String(ScrollSpeed)} onChange={e => setScrollSpeed(Number(e.target.value))} />
         {' '}
-        miliseconds
+        milliseconds
         <br />
-        <input
-          type="checkbox"
-          name="loop"
-          id="loop"
-          checked={loop}
-          onChange={e => setLoop(e.target.checked)}
-        />
+        <input type="checkbox" name="loop" id="loop" checked={loop} onChange={e => setLoop(e.target.checked)} />
         <label htmlFor="loop">loop?</label>
       </div>
       {onSubmit && (
         <button type="submit" className={submitClass || ''}>
+          {' '}
           {submitContent}
+          {' '}
         </button>
       )}
     </form>
@@ -170,9 +142,7 @@ function FormHandler() {
   }
   const finishedSyncing = () => {
     setDoneSyncing(true)
-    setTimeout(() => {
-      setDoneOpacity(0)
-    }, 3000)
+    setTimeout(() => {setDoneOpacity(0)}, 3000)
   }
   const fetchSyncedSettings = async () => {
     if (globalThis.chrome?.storage) {
@@ -238,23 +208,15 @@ function FormHandler() {
       console.log('saving', scrollDuration, scrollPixels)
       try {
         await chrome.storage.sync.set({
-          [settingsKey]: {
-            scrollDuration,
-            scrollPixels,
-            loop
-          } as Settings
+          [settingsKey]: {scrollDuration, scrollPixels, loop} as Settings
         })
-      } catch (e) {
-        console.error(e)
-      }
+      } catch (e) {console.error(e)}
     }
     setDisplaySaved(true)
     setSavedOpacity(1)
     setTimeout(() => {
       setSavedOpacity(0)
-      setTimeout(() => {
-        setDisplaySaved(false)
-      }, 1500)
+      setTimeout(() => {setDisplaySaved(false)}, 1500)
     }, 3000)
     finishedSyncing()
   }
@@ -277,13 +239,7 @@ function FormHandler() {
         {doneSyncing ? 'Synced!' : 'Syncing...'}
       </div>
       <div>
-        <TransientMessage
-          done={() => setError('')}
-          value={error}
-          delay={15000}
-          duration={3000}
-          className="error-message"
-        >
+        <TransientMessage done={() => setError('')} value={error} delay={15000} duration={3000} className="error-message">
           {error}
         </TransientMessage>
       </div>
