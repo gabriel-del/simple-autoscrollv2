@@ -1,9 +1,11 @@
 {
   "name": "simple-autoscrollv2",
+  "type": "module",
   "version": "2.0.0",
   "description": "Extension I was asked to build",
+  "author": "",
+  "license": "ISC",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",
@@ -12,8 +14,6 @@
     "format": "prettier --write src/",
     "pack": "zip -r simple-autoscrollv2.zip scripts images LICENSE manifest.json"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "@picocss/pico": "^1.5.7",
     "@types/chrome": "^0.0.221",

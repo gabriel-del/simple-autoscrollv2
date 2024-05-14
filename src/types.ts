@@ -1,4 +1,4 @@
-export type Settings = {
+export interface Settings {
   scrollDuration: number
   scrollPixels: number
   loop: boolean
