@@ -24,12 +24,12 @@ function startAutoscroll(scrollDuration: number, scrollPixels: number, loop: boo
       } else {
         element.scroll(0, scrollTop + scrollPixels!)
       }
-      const delta = element.scrollTop - scrollTop
       if (isDone && loop) {
         // Some websites slow down scrolling, causing the looping function to potentially break as it takes too long to reach the top. To fix it
         isLooping = true
         element.scroll({top: 0, behavior: 'auto'})
       }
+      const delta = element.scrollTop - scrollTop
       if (delta) break
     }
   }, scrollDuration)
@@ -42,23 +42,21 @@ async function main() {
   }
 
   chrome.runtime.onMessage.addListener(message => {
-    console.log(message)
-    if (message) {
-      isLooping = false
-      const {scrollDuration: SD, scrollPixels: SP, loop, stop, pause} = message as Message
-      scrollLoop = loop
-      if (stop) {
+    if (!message) return
+    isLooping = false
+    const {scrollDuration: SD, scrollPixels: SP, loop, stop, pause} = message as Message
+    scrollLoop = loop
+    if (stop) {
+      stopAutoscroll()
+    } else if (pause) {
+      if (intCB >= 0)
         stopAutoscroll()
-      } else if (pause) {
-        if (intCB >= 0)
-          stopAutoscroll()
-        else
-          if (scrollDuration && scrollPixels) startAutoscroll(scrollDuration, scrollPixels, scrollLoop)
-      } else {
-        scrollDuration = SD
-        scrollPixels = SP
-        startAutoscroll(SD, SP, loop)
-      }
+      else
+        if (scrollDuration && scrollPixels) startAutoscroll(scrollDuration, scrollPixels, scrollLoop)
+    } else {
+      scrollDuration = SD
+      scrollPixels = SP
+      startAutoscroll(SD, SP, loop)
     }
   })
 }
