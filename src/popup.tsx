@@ -5,21 +5,18 @@ import {Message, Settings} from './types'
 
 const container = document.getElementById('app')
 const root = createRoot(container!)
-
 const ErrorMessages = {
   CANNOT_CONNECT_TO_ACTIVE_TAB:
     'Unable to connect to the active tab. If this is a non-chrome tab, refreshing the tab might resolve the issue.',
   CANNOT_QUERY_CURRENT_TAB:
     'Unable to query the active tab. Please ensure that the window is active and try again'
 } as const
+const settingsKey = 'defaultSettings'
 
-function TransientMessage({children, duration, value, delay = 0, done, ...rest}: {
+function TransientMessage({children, value, done, }: {
   children: ReactNode
-  duration: number
-  delay?: number
   done?: () => void
   value: any
-  [key: string]: unknown
 }) {
   const [opacity, setOpacity] = useState(1)
   const [visible, setVisibility] = useState(true)
@@ -27,18 +24,16 @@ function TransientMessage({children, duration, value, delay = 0, done, ...rest}:
     (async () => {
       setOpacity(1);
       setVisibility(true);
-      await new Promise(resolve => setTimeout(resolve, delay));
+      await new Promise(resolve => setTimeout(resolve, 15000));
       setOpacity(0);
-      await new Promise(resolve => setTimeout(resolve, duration));
+      await new Promise(resolve => setTimeout(resolve, 3000));
       setVisibility(false);
       if (done) done();
     })()
   }, [value])
   return visible
-    ? ( <span style={{opacity}} {...rest}> {'       '}{children}{'       '} </span> ) : null
+    ? ( <span style={{opacity}} className="error-message"> {'       '}{children}{'       '} </span> ) : null
 }
-
-const settingsKey = 'defaultSettings'
 
 function FormHandler() {
   const [error, setError] = useState('')
@@ -137,24 +132,19 @@ function FormHandler() {
         <input type="checkbox" name="loop" id="loop" checked={loop} onChange={e => setLoop(e.target.checked)} />
         <label htmlFor="loop">loop?</label>
       </div>
-      {
-        <button type="submit">
-          {' Go '}
-        </button>
-      }
+        <button type="submit"> {' Go '} </button>
     </form>
-
 
       <div aria-busy={!doneSyncing} className="syncing" style={{opacity: doneOpacity}}>
         {doneSyncing ? 'Synced!' : 'Syncing...'}
       </div>
       <div>
-        <TransientMessage done={() => setError('')} value={error} delay={15000} duration={3000} className="error-message">
-          {error}
-        </TransientMessage>
+        <TransientMessage done={() => setError('')} value={error}  > {error} </TransientMessage>
       </div>
     </>
   )
 }
+
+
 
 root.render(<FormHandler />)
