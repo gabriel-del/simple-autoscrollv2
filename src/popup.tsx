@@ -81,26 +81,21 @@ function FormHandler() {
   }
 
   const sendMessage = async (message: Message, showErrors: boolean = true) => {
-    if (globalThis.chrome?.tabs) {
-      try {
-        const [firstTab] = await chrome.tabs.query({active: true, currentWindow: true})
-        if (firstTab && firstTab.id) {
-          try {
-            await chrome.tabs.sendMessage(firstTab.id, message as Message)
-            if (showErrors) setError('')
-            console.log('Sent to tab: ', firstTab.id)
-          } catch (e) {
-            if (showErrors) setError(ErrorMessages.CANNOT_CONNECT_TO_ACTIVE_TAB)
-          }
-        } else {
-          if (showErrors) setError(ErrorMessages.CANNOT_QUERY_CURRENT_TAB)
-        }
-      } catch (e) {
-        if (showErrors) setError(ErrorMessages.CANNOT_QUERY_CURRENT_TAB)
-        console.error(e)
-      }
+    if (!globalThis.chrome?.tabs) return
+    try {
+      const [firstTab] = await chrome.tabs.query({active: true, currentWindow: true})
+      if (!firstTab?.id) { if (showErrors) setError(ErrorMessages.CANNOT_QUERY_CURRENT_TAB); return}
+        try {
+          chrome.tabs.sendMessage(firstTab.id, message as Message)
+          if (showErrors) setError('')
+          console.log('Sent to tab: ', firstTab.id)
+        } catch (e) { if (showErrors) setError(ErrorMessages.CANNOT_CONNECT_TO_ACTIVE_TAB) }
+    } catch (e) {
+      if (showErrors) setError(ErrorMessages.CANNOT_QUERY_CURRENT_TAB)
+      console.error(e)
     }
   }
+
   useEffect(() => {
     sendMessage({stop: true} as Message, false)
     fetchSyncedSettings().catch(() => console.error('Error syncing'))
