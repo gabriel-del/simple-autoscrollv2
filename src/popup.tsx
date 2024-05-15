@@ -105,7 +105,6 @@ function FormHandler() {
     sendMessage({stop: true} as Message, false)
     fetchSyncedSettings().catch(() => console.error('Error syncing'))
   }, [])
-  const onSubmit = () => sendMessage({scrollDuration, scrollPixels, loop} as Message)
   const saveAsDefault = async () => {
     startSyncing()
     setDisplaySaved(false)
@@ -126,7 +125,7 @@ function FormHandler() {
 
   return (
     <>
-    <form onSubmit={e => { e.preventDefault(); if (onSubmit) onSubmit() }} >
+    <form onSubmit={e => { e.preventDefault(); sendMessage({scrollDuration, scrollPixels, loop} as Message) }} >
       <div className="grid">
         <button id="default" type="button" onClick={saveAsDefault}> Save as default </button>
         {displaySaved
