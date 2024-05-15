@@ -34,8 +34,6 @@ function TransientMessage({children, duration, value, delay = 0, done, ...rest}:
       if (done) done();
     })()
   }, [value])
-
-
   return visible
     ? ( <span style={{opacity}} {...rest}> {'       '}{children}{'       '} </span> ) : null
 }
@@ -103,29 +101,18 @@ function FormHandler() {
       }
     }
   }
-
-  const stop = () => {
-    sendMessage({stop: true} as Message, false)
-  }
   useEffect(() => {
-    stop()
-    fetchSyncedSettings().catch(() => {
-      console.error('Error syncing')
-    })
+    sendMessage({stop: true} as Message, false)
+    fetchSyncedSettings().catch(() => console.error('Error syncing'))
   }, [])
-  const onSubmit = () => {
-    sendMessage({scrollDuration, scrollPixels, loop} as Message)
-  }
-
+  const onSubmit = () => sendMessage({scrollDuration, scrollPixels, loop} as Message)
   const saveAsDefault = async () => {
     startSyncing()
     setDisplaySaved(false)
     if (globalThis.chrome?.storage) {
       console.log('saving', scrollDuration, scrollPixels)
       try {
-        await chrome.storage.sync.set({
-          [settingsKey]: {scrollDuration, scrollPixels, loop} as Settings
-        })
+        await chrome.storage.sync.set({ [settingsKey]: {scrollDuration, scrollPixels, loop} as Settings })
       } catch (e) {console.error(e)}
     }
     setDisplaySaved(true)
