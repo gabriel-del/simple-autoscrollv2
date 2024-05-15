@@ -13,7 +13,7 @@ const ErrorMessages = {
     'Unable to query the active tab. Please ensure that the window is active and try again'
 } as const
 
-async function TransientMessage({children, duration, value, delay = 0, done, ...rest}: {
+function TransientMessage({children, duration, value, delay = 0, done, ...rest}: {
   children: ReactNode
   duration: number
   delay?: number
