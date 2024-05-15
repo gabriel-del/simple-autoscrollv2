@@ -13,7 +13,7 @@ const ErrorMessages = {
 } as const
 const settingsKey = 'defaultSettings'
 
-function TransientMessage({children, value, done, }: {
+function TransientMessage({children, value, done}: {
   children: ReactNode
   done?: () => void
   value: any
@@ -22,17 +22,18 @@ function TransientMessage({children, value, done, }: {
   const [visible, setVisibility] = useState(true)
   useEffect(() => {
     (async () => {
-      setOpacity(1);
-      setVisibility(true);
-      await new Promise(resolve => setTimeout(resolve, 15000));
-      setOpacity(0);
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      setVisibility(false);
-      if (done) done();
+      setOpacity(1)
+      setVisibility(true)
+      await new Promise(resolve => setTimeout(resolve, 15000))
+      setOpacity(0)
+      await new Promise(resolve => setTimeout(resolve, 3000))
+      setVisibility(false)
+      if (done) done()
     })()
   }, [value])
   return visible
-    ? ( <span style={{opacity}} className="error-message"> {'       '}{children}{'       '} </span> ) : null
+    ? <span style={{opacity}} className="error-message"> {'        '}{children}{'        '}</span>
+    : null
 }
 
 function FormHandler() {
@@ -48,7 +49,7 @@ function FormHandler() {
     setDoneSyncing(false)
     setDoneOpacity(1)
   }
-  const finishedSyncing =  async () => {
+  const finishedSyncing = async () => {
     setDoneSyncing(true)
     await new Promise(_ => setTimeout(_, 3000))
     setDoneOpacity(0)
@@ -66,20 +67,19 @@ function FormHandler() {
         setScrollPixels(scrollPixels)
         setLoop(Boolean(loop))
       }
-    } catch (e) { console.error(e) }
-    finally { finishedSyncing() }
+    } catch (e) {console.error(e)} finally {finishedSyncing()}
   }
 
   const sendMessage = async (message: Message, showErrors: boolean = true) => {
     if (!globalThis.chrome?.tabs) return
     try {
       const [firstTab] = await chrome.tabs.query({active: true, currentWindow: true})
-      if (!firstTab?.id) { if (showErrors) setError(ErrorMessages.CANNOT_QUERY_CURRENT_TAB); return}
-        try {
-          chrome.tabs.sendMessage(firstTab.id, message as Message)
-          if (showErrors) setError('')
-          console.log('Sent to tab: ', firstTab.id)
-        } catch (e) { if (showErrors) setError(ErrorMessages.CANNOT_CONNECT_TO_ACTIVE_TAB) }
+      if (!firstTab?.id) {if (showErrors) setError(ErrorMessages.CANNOT_QUERY_CURRENT_TAB); return}
+      try {
+        chrome.tabs.sendMessage(firstTab.id, message as Message)
+        if (showErrors) setError('')
+        console.log('Sent to tab: ', firstTab.id)
+      } catch (e) {if (showErrors) setError(ErrorMessages.CANNOT_CONNECT_TO_ACTIVE_TAB)}
     } catch (e) {
       if (showErrors) setError(ErrorMessages.CANNOT_QUERY_CURRENT_TAB)
       console.error(e)
@@ -96,7 +96,7 @@ function FormHandler() {
     if (globalThis.chrome?.storage) {
       console.log('saving', scrollDuration, scrollPixels)
       try {
-        await chrome.storage.sync.set({ [settingsKey]: {scrollDuration, scrollPixels, loop} as Settings })
+        await chrome.storage.sync.set({[settingsKey]: {scrollDuration, scrollPixels, loop} as Settings})
       } catch (e) {console.error(e)}
     }
     setDisplaySaved(true)
@@ -110,31 +110,31 @@ function FormHandler() {
 
   return (
     <>
-    <form onSubmit={e => { e.preventDefault(); sendMessage({scrollDuration, scrollPixels, loop} as Message) }} >
-      <div className="grid">
-        <button id="default" type="button" onClick={saveAsDefault}> Save as default </button>
-        {displaySaved
-          ? (<div className="save-section" id="saved" style={{opacity: savedOpacity}}> Saved ✓ </div>)
-          : null}
-        Scroll
-        <br />
-        <input id="scroll" type="number" min="-5000" max="5000" value={String(scrollPixels)} onChange={e => setScrollPixels(Number(e.target.value))} />
-        {'   pixels every '}
-        <br />
-        <input id="seconds" type="number" min="1" max="600000" value={String(scrollDuration)} onChange={e => setScrollDuration(Number(e.target.value))} />
-        {' milliseconds'}
-        <br />
-        <input type="checkbox" name="loop" id="loop" checked={loop} onChange={e => setLoop(e.target.checked)} />
-        <label htmlFor="loop">loop?</label>
-      </div>
-        <button type="submit"> {' Go '} </button>
-    </form>
+      <form onSubmit={e => {e.preventDefault(); sendMessage({scrollDuration, scrollPixels, loop} as Message)}}>
+        <div className="grid">
+          <button id="default" type="button" onClick={saveAsDefault}> Save as default </button>
+          {displaySaved
+            ? (<div className="save-section" id="saved" style={{opacity: savedOpacity}}> Saved ✓ </div>)
+            : null}
+          Scroll
+          <br />
+          <input id="scroll" type="number" min="-5000" max="5000" value={String(scrollPixels)} onChange={e => setScrollPixels(Number(e.target.value))} />
+          {'   pixels every '}
+          <br />
+          <input id="seconds" type="number" min="1" max="600000" value={String(scrollDuration)} onChange={e => setScrollDuration(Number(e.target.value))} />
+          {' milliseconds'}
+          <br />
+          <input type="checkbox" name="loop" id="loop" checked={loop} onChange={e => setLoop(e.target.checked)} />
+          <label htmlFor="loop">loop?</label>
+        </div>
+        <button type="submit">{'  Go  '}</button>
+      </form>
 
       <div aria-busy={!doneSyncing} className="syncing" style={{opacity: doneOpacity}}>
         {doneSyncing ? 'Synced!' : 'Syncing...'}
       </div>
       <div>
-        <TransientMessage done={() => setError('')} value={error}  > {error} </TransientMessage>
+        <TransientMessage done={() => setError('')} value={error}>{' '}{error}{' '}</TransientMessage>
       </div>
     </>
   )
