@@ -13,28 +13,7 @@ const ErrorMessages = {
 } as const
 const settingsKey = 'defaultSettings'
 
-function TransientMessage({children, value, done}: {
-  children: ReactNode
-  done?: () => void
-  value: any
-}) {
-  const [opacity, setOpacity] = useState(1)
-  const [visible, setVisibility] = useState(true)
-  useEffect(() => {
-    (async () => {
-      setOpacity(1)
-      setVisibility(true)
-      await new Promise(resolve => setTimeout(resolve, 15000))
-      setOpacity(0)
-      await new Promise(resolve => setTimeout(resolve, 3000))
-      setVisibility(false)
-      if (done) done()
-    })()
-  }, [value])
-  return visible
-    ? <span style={{opacity}} className="error-message"> {'        '}{children}{'        '}</span>
-    : null
-}
+
 
 function FormHandler() {
   const [error, setError] = useState('')
@@ -45,6 +24,27 @@ function FormHandler() {
   const [displaySaved, setDisplaySaved] = useState(false)
   const [doneSyncing, setDoneSyncing] = useState(true)
   const [doneOpacity, setDoneOpacity] = useState(1)
+  const [opacity, setOpacity] = useState(1)
+  const [visible, setVisibility] = useState(true)
+
+  const TransientMessage = ({children}: { children: ReactNode}) => {
+    useEffect(() => {(async () => {
+        setOpacity(1)
+        setVisibility(true)
+        await new Promise(resolve => setTimeout(resolve, 15000))
+        setOpacity(0)
+        await new Promise(resolve => setTimeout(resolve, 3000))
+        setVisibility(false)
+        setError('')
+      })()
+    }, [error])
+    return visible
+      ? <span style={{opacity}} className="error-message"> {'        '}{children}{'        '}</span>
+      : null
+  }
+
+
+
   const startSyncing = () => {
     setDoneSyncing(false)
     setDoneOpacity(1)
@@ -69,7 +69,6 @@ function FormHandler() {
       }
     } catch (e) {console.error(e)} finally {finishedSyncing()}
   }
-
   const sendMessage = async (message: Message, showErrors: boolean = true) => {
     if (!globalThis.chrome?.tabs) return
     try {
@@ -85,7 +84,6 @@ function FormHandler() {
       console.error(e)
     }
   }
-
   useEffect(() => {
     sendMessage({stop: true} as Message, false)
     fetchSyncedSettings().catch(() => console.error('Error syncing'))
@@ -107,7 +105,6 @@ function FormHandler() {
     setDisplaySaved(false)
     finishedSyncing()
   }
-
   return (
     <>
       <form onSubmit={e => {e.preventDefault(); sendMessage({scrollDuration, scrollPixels, loop} as Message)}}>
@@ -134,7 +131,7 @@ function FormHandler() {
         {doneSyncing ? 'Synced!' : 'Syncing...'}
       </div>
       <div>
-        <TransientMessage done={() => setError('')} value={error}>{' '}{error}{' '}</TransientMessage>
+        <TransientMessage>{' '}{error}{' '}</TransientMessage>
       </div>
     </>
   )
