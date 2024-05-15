@@ -54,25 +54,20 @@ function FormHandler() {
     setDoneOpacity(0)
   }
   const fetchSyncedSettings = async () => {
-    if (globalThis.chrome?.storage) {
-      try {
-        startSyncing()
-        const settings = (((await chrome.storage.sync.get([settingsKey])) || {})?.[settingsKey]
-          || {}) as Settings
-        const {scrollDuration, scrollPixels, loop} = settings
-        console.log('Got new settings from sync', scrollDuration, scrollPixels)
-        if (scrollDuration && scrollPixels) {
-          console.log('Setting defaults')
-          setScrollDuration(scrollDuration)
-          setScrollPixels(scrollPixels)
-          setLoop(Boolean(loop))
-        }
-      } catch (e) {
-        console.error(e)
-      } finally {
-        finishedSyncing()
+    if (!globalThis.chrome?.storage) return
+    try {
+      startSyncing()
+      const settings = (((await chrome.storage.sync.get([settingsKey])) || {})?.[settingsKey] || {}) as Settings
+      const {scrollDuration, scrollPixels, loop} = settings
+      console.log('Got new settings from sync', scrollDuration, scrollPixels)
+      if (scrollDuration && scrollPixels) {
+        console.log('Setting defaults')
+        setScrollDuration(scrollDuration)
+        setScrollPixels(scrollPixels)
+        setLoop(Boolean(loop))
       }
-    }
+    } catch (e) { console.error(e) }
+    finally { finishedSyncing() }
   }
 
   const sendMessage = async (message: Message, showErrors: boolean = true) => {
@@ -144,7 +139,5 @@ function FormHandler() {
     </>
   )
 }
-
-
 
 root.render(<FormHandler />)
